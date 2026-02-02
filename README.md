@@ -1,4 +1,6 @@
-<img src="public/logos/Candoxa_Horizontal_Logo.png" width="500"/>
+<div align="center">
+  <img src="public/logos/Candoxa_Horizontal_Logo.png" width="500" />
+</div>
 
 # Candoxa DApp
 
@@ -6,12 +8,12 @@
   - [2. Features](#2-features)
   - [3. Technologies Used](#3-technologies-used)
   - [4. Prerequisites](#4-prerequisites)
-    - [4.1. Node.js](#31-nodejs)
-    - [4.2. TypeScript](#32-typescript)
+    - [4.1. Node.js](#41-nodejs)
+    - [4.2. TypeScript](#42-typescript)
   - [5. Installation](#5-installation)
     - [5.1. Clone the Repository](#51-clone-the-repository)
     - [5.2. Access the Project Directory](#52-access-the-project-directory)
-    - [5.3. Install Dependencies](#54-install-dependencies)
+    - [5.3. Install Dependencies](#53-install-dependencies)
   - [6. Execution](#6-execution)
     - [6.1. Configure Environment Variables](#61-configure-environment-variables)
     - [6.2. Start the Application](#62-start-the-application)
