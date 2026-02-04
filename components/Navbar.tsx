@@ -1,10 +1,32 @@
+"use client"
+
 import Image from "next/image";
 import { Button } from "./ui/button";
 import CandoxaLogo from '@/public/logos/Candoxa_Logo.svg'
 import MetaMask from '@/public/icons/MetaMask.svg'
 import Link from "next/link";
+import { LogOut } from 'lucide-react'
+import { injected, useConnect, useConnection, useDisconnect } from "wagmi";
+import { toast } from "sonner";
+import { useEffect, useRef } from "react";
 
 export default function Navbar() {
+  const connection = useConnection()
+  const { connect, status, error } = useConnect({
+    mutation: {
+      onSuccess: () => {
+        toast.success('Wallet Connected Successfully!')
+      }
+    }
+  })
+  const { disconnect } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        toast.info('Wallet Disconnected')
+      }
+    }
+  })
+
   return (
     <div className="flex items-center justify-between p-6 bg-white fixed w-full z-20">
       <Link href="/">
@@ -15,29 +37,51 @@ export default function Navbar() {
           height={50}
         />
       </Link>
-      <ul className="flex gap-8 text-lg font-medium text-dark-blue">
-        <li className="hover:underline hover:text-blue-primary cursor-pointer">
-          <Link href="/">
-            Home
-          </Link>
-        </li>
-        <li className="hover:underline hover:text-blue-primary cursor-pointer">
-          <Link href="/links-page">
-            Links Page
-          </Link>
-        </li>
-      </ul>
-      <Button
-        className="flex items-center gap-4 p-6 bg-light-blue hover:bg-blue-primary hover:underline cursor-pointer rounded-xl text-white font-bold"
-      >
-        <Image
-          src={MetaMask}
-          alt="MetaMask Logo"
-          width={30}
-          height={30}
-        />
-        Connect with MetaMask
-      </Button>
+      {connection.status === 'connected' &&
+        <ul className="flex gap-8 text-lg font-medium text-dark-blue">
+          <li className="hover:underline hover:text-blue-primary cursor-pointer">
+            <Link href="/">
+              Home
+            </Link>
+          </li>
+          <li className="hover:underline hover:text-blue-primary cursor-pointer">
+            <Link href="/links-page">
+              Links Page
+            </Link>
+          </li>
+        </ul>
+      }
+      <div className="flex items-center">
+        {connection.addresses && connection.addresses.length > 0 ?
+          <div className="flex items-center gap-4">
+            <span className="font-bold">{`${(connection.addresses[0]).slice(0, 6)}....${(connection.addresses[0]).slice(-4)}`}</span>
+            <Button
+              size="icon"
+              onClick={() => disconnect()}
+              className="p-6 cursor-pointer text-light-blue hover:text-white hover:bg-light-blue rounded-full"
+            >
+              <LogOut className="" />
+            </Button>
+          </div>
+          :
+          <Button
+            className="flex items-center gap-4 p-6 bg-light-blue hover:underline cursor-pointer rounded-full text-white font-bold hover:bg-blue-primary"
+            onClick={() => { connect({ connector: injected() }) }}
+          >
+            <Image
+              src={MetaMask}
+              alt="MetaMask Logo"
+              width={30}
+              height={30}
+            />
+            Connect with MetaMask
+          </Button>
+        }
+
+        {/* {connection.status === 'connected' && (
+          
+        )} */}
+      </div>
     </div>
   )
 }
