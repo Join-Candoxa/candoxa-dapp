@@ -8,11 +8,10 @@ import Link from "next/link";
 import { LogOut } from 'lucide-react'
 import { injected, useConnect, useConnection, useDisconnect } from "wagmi";
 import { toast } from "sonner";
-import { useEffect, useRef } from "react";
 
 export default function Navbar() {
   const connection = useConnection()
-  const { connect, status, error } = useConnect({
+  const { connect } = useConnect({
     mutation: {
       onSuccess: () => {
         toast.success('Wallet Connected Successfully!')
@@ -28,7 +27,7 @@ export default function Navbar() {
   })
 
   return (
-    <div className="flex items-center justify-between p-6 bg-white fixed w-full z-20">
+    <div className="flex items-center justify-between p-6 bg-lavender-blue fixed w-full z-20 border-b-2 border-dark-blue">
       <Link href="/">
         <Image
           src={CandoxaLogo}
@@ -45,8 +44,13 @@ export default function Navbar() {
             </Link>
           </li>
           <li className="hover:underline hover:text-blue-primary cursor-pointer">
-            <Link href="/links-page">
-              Links Page
+            <Link href="/feed">
+              Feed
+            </Link>
+          </li>
+          <li className="hover:underline hover:text-blue-primary cursor-pointer">
+            <Link href="/my-links">
+              My Links
             </Link>
           </li>
         </ul>
@@ -54,13 +58,16 @@ export default function Navbar() {
       <div className="flex items-center">
         {connection.addresses && connection.addresses.length > 0 ?
           <div className="flex items-center gap-4">
-            <span className="font-bold">{`${(connection.addresses[0]).slice(0, 6)}....${(connection.addresses[0]).slice(-4)}`}</span>
+            <div className="flex flex-col items-center">
+              <span className="font-bold text-xl text-blue-primary">{`${(connection.addresses[0]).slice(0, 6)}....${(connection.addresses[0]).slice(-4)}`}</span>
+              <span className="font-sherika text-dark-blue">20 Doxa Points</span>
+            </div>
             <Button
               size="icon"
               onClick={() => disconnect()}
               className="p-6 cursor-pointer text-light-blue hover:text-white hover:bg-light-blue rounded-full"
             >
-              <LogOut className="" />
+              <LogOut />
             </Button>
           </div>
           :
@@ -77,10 +84,6 @@ export default function Navbar() {
             Connect with MetaMask
           </Button>
         }
-
-        {/* {connection.status === 'connected' && (
-          
-        )} */}
       </div>
     </div>
   )
