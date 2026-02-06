@@ -49,25 +49,27 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${sherika.variable} font-sans antialiased w-screen h-screen`}
+        className={`${poppins.variable} ${sherika.variable} antialiased w-screen h-screen`}
       >
         <Web3Provider initialState={initialState}>
-          <Image
-            src={BackgroundGridImageDApp}
-            alt="Background Grid Image DApp"
-            fill
-            className="object-cover -z-10"
-            quality={100}
-            priority
-          />
-          <Image
-            src={BackgroundImageDApp}
-            alt="Background Image DApp"
-            fill
-            className="object-cover -z-10 animate-fadeOut"
-            quality={100}
-            priority
-          />
+          <div className="fixed inset-0 -z-10">
+            <Image
+              src={BackgroundGridImageDApp}
+              alt="Background Grid Image DApp"
+              fill
+              className="object-cover"
+              quality={100}
+              priority
+            />
+            <Image
+              src={BackgroundImageDApp}
+              alt="Background Image DApp"
+              fill
+              className="object-cover animate-fadeOut"
+              quality={100}
+              priority
+            />
+          </div>
           <div className="animate-fadeIn">
             <Navbar />
             {children}
