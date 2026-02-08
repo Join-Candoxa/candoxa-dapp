@@ -1,7 +1,7 @@
 "use client"
 
 import { FormEvent, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,19 +12,81 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { addLink, getCurrentAccount, switchToBSCTestnet } from "@/lib/web3/contract";
+import { toast } from "sonner";
 
-export default function DialogRegisterLink() {
+type DialogRegisterLinkProps = {
+  onLinkAdded?: () => void;
+};
+
+export default function DialogRegisterLink({ onLinkAdded }: DialogRegisterLinkProps) {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     url: "",
     title: "",
     description: ""
   });
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    console.log("Form submitted:", formData);
-    setOpen(false);
+    setLoading(true);
+
+    try {
+      // Verifica se há uma conta conectada
+      const account = await getCurrentAccount();
+      
+      if (!account) {
+        toast.error("Please connect your wallet first");
+        setLoading(false);
+        return;
+      }
+
+      // Garante que está na rede BSC Testnet
+      await switchToBSCTestnet();
+
+      // Chama a função addLink do contrato
+      toast.info("Please confirm the transaction in your wallet");
+      
+      await addLink(
+        formData.title,
+        formData.description,
+        formData.url,
+        account
+      );
+
+      toast.success("Link registered successfully!");
+      
+      // Reseta o formulário
+      setFormData({
+        url: "",
+        title: "",
+        description: ""
+      });
+
+      setOpen(false);
+      
+      // Recarrega a lista de links
+      if (onLinkAdded) {
+        onLinkAdded();
+      }
+    } catch (error) {
+      console.error("Error adding link:", error);
+      
+      if (error instanceof Error) {
+        if (error.message.includes("User rejected")) {
+          toast.error("Transaction rejected by user");
+        } else if (error.message.includes("Already been Registered")) {
+          toast.error("This link has already been registered by you");
+        } else {
+          toast.error("Error registering link: " + error.message);
+        }
+      } else {
+        toast.error("Error registering link. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,6 +119,7 @@ export default function DialogRegisterLink() {
               value={formData.url}
               onChange={(event) => setFormData({ ...formData, url: event.target.value })}
               className="border border-white/20 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 text-blue-primary placeholder:text-dark-blue/50 focus:ring-2 focus:ring-blue-primary/50 focus:border-transparent transition-all"
+              disabled={loading}
               required
             />
           </div>
@@ -69,6 +132,7 @@ export default function DialogRegisterLink() {
               value={formData.title}
               onChange={(event) => setFormData({ ...formData, title: event.target.value })}
               className="border border-white/20 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 text-blue-primary placeholder:text-dark-blue/50 focus:ring-2 focus:ring-blue-primary/50 focus:border-transparent transition-all"
+              disabled={loading}
               required
             />
           </div>
@@ -80,6 +144,7 @@ export default function DialogRegisterLink() {
               value={formData.description}
               onChange={(event) => setFormData({ ...formData, description: event.target.value })}
               className="border border-white/20 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 text-blue-primary placeholder:text-dark-blue/50 focus:ring-2 focus:ring-blue-primary/50 focus:border-transparent transition-all min-h-25 resize-none"
+              disabled={loading}
               required
             />
           </div>
@@ -88,7 +153,8 @@ export default function DialogRegisterLink() {
             <Button
               type="button"
               onClick={() => setOpen(false)}
-              className="relative z-10 flex-1 py-3 px-6 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm text-dark-blue cursor-pointer shadow-lg shadow-blue-500/5 hover:shadow-blue-500/10 transition-all duration-300 hover:scale-[1.02] hover:underline overflow-hidden font-semibold"
+              disabled={loading}
+              className="relative z-10 flex-1 py-3 px-6 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm text-dark-blue cursor-pointer shadow-lg shadow-blue-500/5 hover:shadow-blue-500/10 transition-all duration-300 hover:scale-[1.02] hover:underline overflow-hidden font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-linear-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
               Cancel
@@ -96,11 +162,19 @@ export default function DialogRegisterLink() {
 
             <Button
               type="submit"
-              className="relative z-10 flex-1 py-3 px-6 rounded-xl border border-white/20 bg-lavender-blue/80 backdrop-blur-xl text-blue-primary cursor-pointer shadow-2xl shadow-blue-500/10 hover:shadow-blue-500/20 transition-all duration-300 hover:scale-[1.02] hover:underline overflow-hidden font-semibold"
+              disabled={loading}
+              className="relative z-10 flex-1 py-3 px-6 rounded-xl border border-white/20 bg-lavender-blue/80 backdrop-blur-xl text-blue-primary cursor-pointer shadow-2xl shadow-blue-500/10 hover:shadow-blue-500/20 transition-all duration-300 hover:scale-[1.02] hover:underline overflow-hidden font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-linear-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-              Register
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </span>
+              ) : (
+                "Register"
+              )}
             </Button>
           </div>
         </form>
