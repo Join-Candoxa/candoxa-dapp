@@ -78,7 +78,7 @@ export default function ProfilePage() {
       <div className="flex gap-8 px-8 max-w-400 mx-auto pt-10">
         {/* Sidebar */}
         <aside className="w-96 shrink-0">
-          <div className="sticky top-30 border border-white/20 bg-lavender-blue/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl shadow-blue-500/10 overflow-hidden">
+          <div className="sticky top-0 border border-white/20 bg-lavender-blue/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl shadow-blue-500/10 overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -112,11 +112,11 @@ export default function ProfilePage() {
 
               {/* Doxa Points Section */}
               <div className="pb-6 border-b border-white/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <Activity className="text-blue-primary w-5 h-5" />
-                  <h3 className="text-blue-primary font-bold text-lg">Doxa Points</h3>
-                </div>
                 <div className="text-center">
+                  <div className="flex justify-center items-center gap-2 mb-4">
+                    <Activity className="text-blue-primary w-5 h-5" />
+                    <h3 className="text-blue-primary font-bold text-lg">Doxa Points</h3>
+                  </div>
                   <p className="text-6xl font-sherika text-blue-primary mb-2">20</p>
                   <p className="text-dark-blue text-sm">Community reputation score</p>
                 </div>

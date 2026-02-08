@@ -55,7 +55,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <Link href="/profile" className="flex flex-col items-center hover:opacity-80 transition-opacity">
               <span className="font-bold text-xl text-blue-primary">{`${(connection.addresses[0]).slice(0, 6)}....${(connection.addresses[0]).slice(-4)}`}</span>
-              <span className="font-sherika text-dark-blue hover:underline">Profile</span>
+              <span className="font-sherika text-dark-blue hover:underline">My Profile</span>
             </Link>
             <Button
               size="icon"
