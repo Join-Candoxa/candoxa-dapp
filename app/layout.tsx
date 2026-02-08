@@ -49,7 +49,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${sherika.variable} antialiased w-screen h-screen`}
+        className={`${poppins.variable} ${sherika.variable} antialiased`}
       >
         <Web3Provider initialState={initialState}>
           <div className="fixed inset-0 -z-10">
@@ -70,9 +70,11 @@ export default async function RootLayout({
               priority
             />
           </div>
-          <div className="animate-fadeIn">
+          <div className="animate-fadeIn h-screen flex flex-col">
             <Navbar />
-            {children}
+            <main className="pt-25 flex-1 overflow-y-auto">
+              {children}
+            </main>
             <Toaster position="bottom-center" />
           </div>
         </Web3Provider>

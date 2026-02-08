@@ -1,52 +1,42 @@
 "use client"
 
 import CardLink from "@/components/CardLink";
-import DialogRegisterLink from "@/components/DialogRegisterLink";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
-import { getLinksByOwner, getCurrentAccount, initWeb3, type Link } from "@/lib/web3/contract";
-import { Loader2, Link as LinkIcon, Activity } from "lucide-react";
+import { getLinksByOwner, initWeb3, type Link as LinkType } from "@/lib/web3/contract";
+import { Loader2, Link as LinkIcon, Activity, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import CandoxaLogo from '@/public/logos/Candoxa_Logo.svg';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function MyLinksPage() {
-  const router = useRouter();
-  const [links, setLinks] = useState<Link[]>([]);
+export default function ProfilePage() {
+  const params = useParams();
+  const walletId = params.wallet_id as string;
+
+  const [links, setLinks] = useState<LinkType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentAccount, setCurrentAccount] = useState<string>("");
 
-  const fetchMyLinks = useCallback(async () => {
+  const fetchUserLinks = useCallback(async () => {
     try {
       initWeb3();
 
-      const account = await getCurrentAccount();
-
-      if (!account) {
-        router.push('/');
-        return;
-      }
-
-      setCurrentAccount(account);
-
-      const myLinks = await getLinksByOwner(account);
-      setLinks(myLinks);
+      // Busca os links do usuário específico
+      const userLinks = await getLinksByOwner(walletId);
+      setLinks(userLinks);
     } catch (error) {
-      console.error('Error loading my links:', error);
+      console.error('Error loading user profile:', error);
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [walletId]);
 
   useEffect(() => {
-    fetchMyLinks();
+    fetchUserLinks();
 
     if (typeof window !== 'undefined' && window.ethereum) {
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts.length === 0) {
-          router.push('/');
-        } else {
-          fetchMyLinks();
-        }
+      const handleAccountsChanged = () => {
+        fetchUserLinks();
       };
 
       window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -57,7 +47,7 @@ export default function MyLinksPage() {
         }
       };
     }
-  }, [fetchMyLinks, router]);
+  }, [fetchUserLinks]);
 
   const formatWalletAddress = (address: string) => {
     return `${address.slice(0, 6)}....${address.slice(-4)}`;
@@ -74,10 +64,10 @@ export default function MyLinksPage() {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-12 h-12 text-blue-primary animate-spin" />
-          <p className="text-white text-lg">Loading your links...</p>
+          <p className="text-white text-lg">Loading profile...</p>
         </div>
       </div>
     );
@@ -87,12 +77,23 @@ export default function MyLinksPage() {
     <div className="pb-10">
       <div className="flex gap-8 px-8 max-w-400 mx-auto pt-10">
         {/* Sidebar */}
-        <aside className="w-80 shrink-0">
+        <aside className="w-96 shrink-0">
           <div className="sticky top-30 border border-white/20 bg-lavender-blue/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl shadow-blue-500/10 overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 flex flex-col gap-8">
+              {/* Back Button */}
+              <Link href="/feed">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-blue-primary hover:text-dark-blue hover:bg-white/10"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Feed
+                </Button>
+              </Link>
+
               {/* Profile Section */}
               <div className="flex flex-col items-center gap-4 pb-6 border-b border-white/20">
                 <Image
@@ -103,9 +104,9 @@ export default function MyLinksPage() {
                 />
                 <div className="text-center">
                   <h2 className="text-blue-primary font-bold text-xl mb-1">
-                    {formatWalletAddress(currentAccount)}
+                    {formatWalletAddress(walletId)}
                   </h2>
-                  <p className="text-dark-blue text-sm">Your Candoxa Profile</p>
+                  <p className="text-dark-blue text-sm">User Profile</p>
                 </div>
               </div>
 
@@ -117,12 +118,12 @@ export default function MyLinksPage() {
                 </div>
                 <div className="text-center">
                   <p className="text-6xl font-sherika text-blue-primary mb-2">20</p>
-                  <p className="text-dark-blue text-sm">Keep building your reputation!</p>
+                  <p className="text-dark-blue text-sm">Community reputation score</p>
                 </div>
               </div>
 
               {/* Stats Section */}
-              <div className="pb-6 border-b border-white/20">
+              <div>
                 <div className="flex items-center gap-2 mb-4">
                   <LinkIcon className="text-blue-primary w-5 h-5" />
                   <h3 className="text-blue-primary font-bold text-lg">Statistics</h3>
@@ -138,15 +139,21 @@ export default function MyLinksPage() {
                   </div>
                 </div>
               </div>
-
-              {/* Register Link Button */}
-              <DialogRegisterLink onLinkAdded={fetchMyLinks} />
             </div>
           </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1">
+          <div className="mb-8">
+            <h1 className="text-white italic font-sherika text-3xl mb-2">
+              {formatWalletAddress(walletId)}&apos;s Links
+            </h1>
+            <p className="text-white text-lg">
+              Explore the verified links and reputation of this user on the blockchain.
+            </p>
+          </div>
+
           {links.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-7 py-20">
               <div className="border border-white/20 bg-lavender-blue/80 backdrop-blur-xl rounded-3xl p-12 shadow-2xl shadow-blue-500/10 relative overflow-hidden max-w-2xl">
@@ -156,11 +163,10 @@ export default function MyLinksPage() {
                 <div className="relative z-10 text-center">
                   <LinkIcon className="w-16 h-16 text-blue-primary mx-auto mb-6" />
                   <h2 className="text-white italic font-sherika text-2xl mb-4">
-                    You haven&apos;t registered any links yet.
+                    No links registered yet
                   </h2>
                   <p className="text-dark-blue text-lg">
-                    Start building your identity by saving what matters. <br />
-                    Your reputation grows as others engage.
+                    This user hasn&apos;t registered any links on the blockchain yet.
                   </p>
                 </div>
               </div>
