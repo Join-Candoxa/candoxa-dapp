@@ -18,15 +18,22 @@
     - [6.1. Configure Environment Variables](#61-configure-environment-variables)
     - [6.2. Start the Application](#62-start-the-application)
     - [6.3. Candoxa DApp Interface](#63-candoxa-dapp-interface)
-    - [6.4. BNB Smart Chain Testnet Explorer](#64-bnb-smart-chain-testnet-explorer)
+    - [6.4. Network Configuration](#64-network-configuration)
+    - [6.5. Base Sepolia Testnet Explorer](#65-base-sepolia-testnet-explorer)
 
 ## 1. Project Description
 Candoxa is a Web3 platform where creators collect their best work from across the internet into one public, permanent profile. Content and reputation are recorded on-chain, so they remain verifiable beyond platforms and algorithms. Discovery is driven by the community, not by opaque feeds or pay-to-play systems. Even if accounts disappear, your work and credibility stay intact.
 
 ## 2. Features
-* **MetaMask integration:** allows users to connect their MetaMask wallet to interact with the Candoxa;
+* **MetaMask Integration:** allows users to connect their MetaMask wallet to interact with Candoxa and sign blockchain transactions;
+* **Link Registration:** users can register and publish links to the blockchain, creating a permanent, verifiable record of their work;
+* **Global Feed:** displays all links registered on the platform by all users, enabling content discovery across the community;
+* **Personal Profile:** users can view their own profile with all links they've registered, along with reputation metrics and statistics;
+* **Public Profile Viewing:** allows viewing any user's public profile by their wallet address, showing their registered links and reputation;
+* **On-Chain Storage:** all links and user data are permanently stored on the Base Sepolia blockchain, ensuring persistence and verifiability;
+* **Automatic Network Switching:** seamlessly adds and switches to Base Sepolia Testnet when connecting your wallet;
 
-* Note: more features will be introduced as development continues*
+*Note: more features will be introduced as development continues*
 
 ## 3. Technologies Used
 * **Next.js:** React framework for building scalable, server-rendered web applications;
@@ -63,7 +70,9 @@ pnpm install
 
 ## 6. Execution
 ### 6.1. Configure Environment Variables
-* Rename the **.env.example** file located at the root of the project to **.env**
+* Rename the **.env.example** file located at the root of the project to **.env.local**
+* Add your WalletConnect Project ID (optional, get it at https://cloud.walletconnect.com/)
+* The contract address is already configured for Base Sepolia Testnet
 
 ### 6.2. Start the Application
 ```sh
@@ -71,7 +80,17 @@ pnpm dev
 ```
 
 ### 6.3. Candoxa DApp Interface
-* The Candoxa DApp UI can be accessed at **http://192.168.2.102:3000/** or **http://localhost:3000/**
+* The Candoxa DApp UI can be accessed at **http://localhost:3000/**
 
-### 6.4. BNB Smart Chain Testnet Explorer
-* Transaction validation can be performed through **https://testnet.bscscan.com/**
+### 6.4. Network Configuration
+The application is configured to work on **Base Sepolia Testnet**. When you connect your wallet, the application will automatically request to add/switch to this network with the following configuration:
+* **Network Name:** Base Sepolia Testnet
+* **RPC URL:** https://sepolia.base.org
+* **Chain ID:** 84532 (0x14a34)
+* **Currency Symbol:** ETH
+* **Block Explorer:** https://sepolia.basescan.org
+* **Contract Address:** 0xaCc207b98375e93cff68B6a0a9ED18b369F1E559
+
+### 6.5. Base Sepolia Testnet Explorer
+* Transaction validation can be performed through **https://sepolia.basescan.org/**
+* You can get testnet ETH from the Base Sepolia faucet at **https://www.alchemy.com/faucets/base-sepolia** (requires Alchemy account)
