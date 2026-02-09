@@ -61,6 +61,27 @@ export default function FeedPage() {
     }
   }, [fetchLinks, router]);
 
+  // Recarrega os links quando a página volta a ser visível/focada
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchLinks();
+      }
+    };
+
+    const handleFocus = () => {
+      fetchLinks();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [fetchLinks]);
+
   const formatWalletAddress = (address: string) => {
     return `${address.slice(0, 6)}....${address.slice(-4)}`;
   };
@@ -86,31 +107,35 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="pb-10">
-      <div className="flex flex-col items-center gap-8 scroll-smooth w-4xl mx-auto pt-10">
-        <div className="flex items-center justify-between gap-4 w-full">
-          <h1 className="text-white italic font-sherika text-xl">
+    <div className="pb-10 pt-20 md:pt-10">
+      <div className="flex flex-col items-center gap-6 md:gap-8 scroll-smooth w-full max-w-4xl mx-auto px-4 md:px-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+          <h1 className="text-white italic font-sherika text-base md:text-xl">
             Identity isn&apos;t a profile, it&apos;s the collection of links associated with you, and reputation is the public proof that they matter.
           </h1>
-          <DialogRegisterLink onLinkAdded={fetchLinks} />
+          <div className="shrink-0">
+            <DialogRegisterLink onLinkAdded={fetchLinks} />
+          </div>
         </div>
         {links.length === 0 ? (
-          <div className="text-white text-center py-10">
-            <p className="text-lg">No links found yet. Be the first to register a link!</p>
+          <div className="text-white text-center py-10 w-full">
+            <p className="text-base md:text-lg">No links found yet. Be the first to register a link!</p>
           </div>
         ) : (
-          links.map((link, index) => (
-            <CardLink
-              key={index}
-              wallet_address={formatWalletAddress(link.linkOwner)}
-              full_wallet_address={link.linkOwner}
-              link={link.link}
-              title={link.title}
-              description={link.description}
-              published_date={formatDate(link.publishedAt)}
-              love_counter={0}
-            />
-          ))
+          <div className="w-full flex flex-col gap-4 md:gap-6">
+            {links.map((link, index) => (
+              <CardLink
+                key={index}
+                wallet_address={formatWalletAddress(link.linkOwner)}
+                full_wallet_address={link.linkOwner}
+                link={link.link}
+                title={link.title}
+                description={link.description}
+                published_date={formatDate(link.publishedAt)}
+                love_counter={0}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
