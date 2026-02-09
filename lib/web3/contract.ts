@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import ABI from '@/ABI.json';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
-const BSC_TESTNET_RPC = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
+const BASE_SEPOLIA_RPC = 'https://sepolia.base.org';
 
 export type Link = {
   linkOwner: string;
@@ -21,7 +21,7 @@ export const initWeb3 = () => {
     web3 = new Web3(window.ethereum);
   } else {
     // Fallback para leitura apenas (sem interações que requerem assinatura)
-    web3 = new Web3(BSC_TESTNET_RPC);
+    web3 = new Web3(BASE_SEPOLIA_RPC);
   }
 
   contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
@@ -108,12 +108,12 @@ export const getCurrentAccount = async (): Promise<string | null> => {
   }
 };
 
-export const switchToBSCTestnet = async (): Promise<void> => {
+export const switchToBaseSepolia = async (): Promise<void> => {
   try {
     if (typeof window !== 'undefined' && window.ethereum) {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x61' }], // BSC Testnet chainId
+        params: [{ chainId: '0x14a34' }], // Base Sepolia chainId (84532 em decimal)
       });
     }
   } catch (error: unknown) {
@@ -123,15 +123,15 @@ export const switchToBSCTestnet = async (): Promise<void> => {
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: '0x61',
-            chainName: 'BSC Testnet',
+            chainId: '0x14a34',
+            chainName: 'Base Sepolia Testnet',
             nativeCurrency: {
-              name: 'BNB',
-              symbol: 'tBNB',
+              name: 'Ethereum',
+              symbol: 'ETH',
               decimals: 18,
             },
-            rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
-            blockExplorerUrls: ['https://testnet.bscscan.com'],
+            rpcUrls: ['https://sepolia.base.org'],
+            blockExplorerUrls: ['https://sepolia.basescan.org'],
           },
         ],
       });

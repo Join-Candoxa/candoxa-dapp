@@ -1,4 +1,4 @@
-import { mainnet, sepolia, polygon, arbitrum } from "viem/chains";
+import { baseSepolia } from "viem/chains";
 import { http, createConfig } from "wagmi";
 import {
   injected,
@@ -8,7 +8,7 @@ import {
 } from "wagmi/connectors";
 
 export const config = createConfig({
-  chains: [mainnet, sepolia, polygon, arbitrum],
+  chains: [baseSepolia],
   connectors: [
     injected(),
     metaMask(),
@@ -20,9 +20,6 @@ export const config = createConfig({
     }),
   ],
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-    [polygon.id]: http(),
-    [arbitrum.id]: http(),
+    [baseSepolia.id]: http('https://sepolia.base.org'),
   },
 });
