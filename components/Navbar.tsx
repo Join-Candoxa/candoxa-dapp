@@ -35,12 +35,41 @@ export default function Navbar() {
   })
 
   const handleConnect = () => {
-    // Tenta conectar com o primeiro conector disponível (geralmente injected)
+    // Detecta se está em dispositivo mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Tenta usar injected primeiro (MetaMask browser ou extensão)
     const injectedConnector = connectors.find(c => c.type === 'injected')
-    if (injectedConnector) {
+    const walletConnectConnector = connectors.find(c => c.type === 'walletConnect')
+    
+    // Se estiver em mobile e não tiver window.ethereum, usa WalletConnect
+    if (isMobile && typeof window !== 'undefined' && !window.ethereum) {
+      if (walletConnectConnector) {
+        toast.info('Opening WalletConnect...')
+        connect({ connector: walletConnectConnector })
+      } else {
+        // Sugere abrir no navegador da MetaMask
+        const currentUrl = window.location.href
+        const metamaskDeepLink = `https://metamask.app.link/dapp/${currentUrl.replace(/^https?:\/\//, '')}`
+        
+        toast.error('Please open this link in MetaMask browser', {
+          action: {
+            label: 'Open in MetaMask',
+            onClick: () => {
+              window.location.href = metamaskDeepLink
+            },
+          },
+          duration: 10000,
+        })
+      }
+    } else if (injectedConnector) {
+      // Desktop ou mobile com MetaMask browser
       connect({ connector: injectedConnector })
+    } else if (walletConnectConnector) {
+      // Fallback para WalletConnect
+      connect({ connector: walletConnectConnector })
     } else {
-      toast.error('MetaMask not detected. Please install MetaMask.')
+      toast.error('No wallet connector available. Please install MetaMask.')
     }
   }
 

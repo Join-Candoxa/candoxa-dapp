@@ -70,14 +70,31 @@ pnpm install
 
 ## 6. Execution
 ### 6.1. Configure Environment Variables
-* Rename the **.env.example** file located at the root of the project to **.env.local**
-* Add your WalletConnect Project ID (optional, get it at https://cloud.walletconnect.com/)
-* The contract address is already configured for Base Sepolia Testnet
+1. Rename the **.env.example** file located at the root of the project to **.env.local**
+2. **Configure WalletConnect Project ID (REQUIRED for mobile):**
+   - Go to https://cloud.walletconnect.com/
+   - Sign up or login
+   - Create a new project
+   - Copy your Project ID
+   - Paste it in `.env.local`: `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID="your_project_id_here"`
+3. The contract address is already configured for Base Sepolia Testnet
+
+**Note:** Without a WalletConnect Project ID, the app will NOT work on mobile devices!
 
 ### 6.2. Start the Application
 ```sh
 pnpm dev
 ```
+
+### 6.3. Connecting Your Wallet
+**On Desktop:**
+- Click "Connect with MetaMask" button
+- Approve the connection in your MetaMask extension
+
+**On Mobile (iPhone/Android):**
+- **Option 1 (Recommended):** Open the app URL directly in the MetaMask mobile browser
+- **Option 2:** Open in any browser (Safari/Chrome), click "Connect with MetaMask", and it will open WalletConnect modal
+- **Note:** Make sure you have configured the WalletConnect Project ID in `.env.local`
 
 ### 6.3. Candoxa DApp Interface
 * The Candoxa DApp UI can be accessed at **http://localhost:3000/**
