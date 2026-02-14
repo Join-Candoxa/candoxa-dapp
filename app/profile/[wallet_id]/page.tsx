@@ -84,13 +84,13 @@ export default function ProfilePage() {
 
             <div className="relative z-10 flex flex-col gap-6 md:gap-8">
               {/* Back Button */}
-              <Link href="/feed">
+              <Link href="/discover">
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-blue-primary hover:text-dark-blue hover:bg-white/10"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Feed
+                  Back to Discover
                 </Button>
               </Link>
 

@@ -7,7 +7,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getAllLinks, getCurrentAccount, initWeb3, type Link } from "@/lib/web3/contract";
 import { Loader2 } from "lucide-react";
 
-export default function FeedPage() {
+export default function DiscoverPage() {
   const router = useRouter();
   const [links, setLinks] = useState<Link[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function FeedPage() {
       const allLinks = await getAllLinks();
       setLinks(allLinks);
     } catch (error) {
-      console.error('Error loading feed:', error);
+      console.error('Error loading Discover:', error);
     } finally {
       setLoading(false);
     }

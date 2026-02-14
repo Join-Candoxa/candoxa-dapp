@@ -37,11 +37,11 @@ export default function Navbar() {
   const handleConnect = () => {
     // Detecta se está em dispositivo mobile
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
+
     // Tenta usar injected primeiro (MetaMask browser ou extensão)
     const injectedConnector = connectors.find(c => c.type === 'injected')
     const walletConnectConnector = connectors.find(c => c.type === 'walletConnect')
-    
+
     // Se estiver em mobile e não tiver window.ethereum, usa WalletConnect
     if (isMobile && typeof window !== 'undefined' && !window.ethereum) {
       if (walletConnectConnector) {
@@ -51,7 +51,7 @@ export default function Navbar() {
         // Sugere abrir no navegador da MetaMask
         const currentUrl = window.location.href
         const metamaskDeepLink = `https://metamask.app.link/dapp/${currentUrl.replace(/^https?:\/\//, '')}`
-        
+
         toast.error('Please open this link in MetaMask browser', {
           action: {
             label: 'Open in MetaMask',
@@ -94,8 +94,8 @@ export default function Navbar() {
             </Link>
           </li>
           <li className="hover:underline hover:text-blue-primary cursor-pointer">
-            <Link href="/feed">
-              Feed
+            <Link href="/discover">
+              Discover
             </Link>
           </li>
         </ul>
@@ -148,27 +148,27 @@ export default function Navbar() {
           <div className="flex flex-col p-4 gap-4">
             {connection.status === 'connected' && (
               <div className="flex flex-col gap-2 border-b border-dark-blue/20 pb-4">
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   className="text-dark-blue hover:text-blue-primary font-medium py-2 px-4 hover:bg-light-blue/20 rounded-lg transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Home
                 </Link>
-                <Link 
-                  href="/feed" 
+                <Link
+                  href="/discover"
                   className="text-dark-blue hover:text-blue-primary font-medium py-2 px-4 hover:bg-light-blue/20 rounded-lg transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Feed
+                  Discover
                 </Link>
               </div>
             )}
 
             {connection.addresses && connection.addresses.length > 0 ? (
               <div className="flex flex-col gap-3">
-                <Link 
-                  href="/profile" 
+                <Link
+                  href="/profile"
                   className="flex flex-col items-center p-4 hover:bg-light-blue/20 rounded-lg transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
